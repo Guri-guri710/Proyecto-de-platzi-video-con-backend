@@ -1,4 +1,5 @@
 @import './Vars.scss';
+@import './Media.scss';
 
 body {
     margin: 0;
@@ -8,4 +9,8 @@ body {
 
   * {
     box-sizing: border-box;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
   }
