@@ -1,4 +1,9 @@
 body {
-    margin:0;
-    background-color: red;
-};
+    margin: 0;
+    font-family: $theme-font;
+    background-color: $main-color;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }

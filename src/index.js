@@ -1,5 +1,5 @@
 import React from 'react';
 import ReactDoM from 'react-dom';
-import HelloWorld from './components/HelloWorld';
+import App from './Containers/App';
 
-ReactDoM.render(<HelloWorld/>, document.getElementById('app'));
+ReactDoM.render(<App/>,document.getElementById('app'));
