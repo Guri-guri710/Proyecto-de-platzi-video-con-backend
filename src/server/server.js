@@ -10,7 +10,8 @@ import { StaticRouter } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
 import initialState from '../frontend/initialState';
 import reducer from '../frontend/reducers/index';
-import serverRouter from '../frontend/routes/serverRoutes'
+import serverRouter from '../frontend/routes/serverRoutes';
+import getManifest from './getManifest';
 
 dotenv.config();
 const { ENV , PORT } = process.env;
@@ -29,20 +30,27 @@ if (ENV === 'development') {
     app.use(webpackHotMiddleware(compiler));
 
   }else{
+      app.use((req, res ,next) => {
+        if(!req.hashManifest)req.hashManifest = getManifest();
+        next();
+      })
       app.use(express.static(`${__dirname}/public`));
       app.use(helmet());
       app.use(helmet.permittedCrossDomainPolicies());
       app.disable('x-poweder-by')
   }
 
-  const setResponse = (html, preloadedState) => {
+  const setResponse = (html, preloadedState, manifest) => {
+      const mainStyless = manifest ? manifest['vendors.css'] : 'assets/app.css';
+      const mainBuild = manifest ? manifest['main.js'] : 'assets/app.js';
+      const vendorBuild = manifest ? manifest['vendors.js'] : 'assets/vendor.js';
       return(`
       <!DOCTYPE html>
       <html lang="en">
           <head>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <link rel="stylesheet" href="assets/app.css" type="text/css" / >
+              <link rel="stylesheet" href=${mainStyless} type="text/css" / >
               <title>Platzi video</title>
           </head>
           <body>
@@ -52,7 +60,8 @@ if (ENV === 'development') {
                 '\\u003c'
               )}
               </script>
-             <script src="assets/app.js" type="text/javascript">
+             <script src=${mainBuild} type="text/javascript">
+             <script src=${vendorBuild} type="text/javascript">
           </body>
       </html>
       `);
@@ -68,7 +77,7 @@ const renderApp = (req, res) => {
             </StaticRouter>
         </Provider>,
     );
-    res.send(setResponse(html ,preloadedState))
+    res.send(setResponse(html ,preloadedState, req.hashManifest))
 }
 
 app.get('*', renderApp);
