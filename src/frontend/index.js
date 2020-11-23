@@ -6,7 +6,7 @@ import { Provider }  from 'react-redux';
 import { createStore } from 'redux';
 import { createBrowserHistory } from 'history';
 import { Router } from 'react-router';
-import initialState from './initialState'
+import initialState from './initialState';
 
 
 
